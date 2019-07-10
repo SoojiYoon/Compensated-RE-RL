@@ -50,7 +50,7 @@ vocab_dict, wv_npy = fo.load_bow(train_data,w2v_data,dim_word)
 print(len(vocab_dict.keys()),len(wv_npy))
 vocab_size = len(vocab_dict.keys())
 properties_list = fo.load_relations(relation_data)
-sents_list, y_list, en1_position_list, en2_position_list,entities_list,a,b = fo.load_semeval_type_data(train_data,
+sents_list, y_list, en1_position_list, en2_position_list,entities_list = fo.load_semeval_type_data(train_data,
                                                                                      max_sequence_length,
                                                                                      vocab_dict,properties_list)
 entity2id_dict, entity_vec_npy = fo.load_entity2vec(entity_id_path,entity_vec_path)

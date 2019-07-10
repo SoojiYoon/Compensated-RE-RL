@@ -61,6 +61,17 @@ if flag_addREL:
 else:
     relation_vec_npy = []
     dim_relation = 0
+if flag_addCOM:
+    valid = []
+    with open(train_data, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            content = line.strip().split("\t")
+            if content[-1] == "T":
+                valid.append(1)
+            else:
+                valid.append(0)
+else:
+    valid = [-1 for i in range(len(sents_list))]
 positionVec_npy = fo.load_pos_vec(position_vec_path)
 num_classes = len(properties_list)
 Bags = fo.constBag(entities_list,y_list,entity2id_dict)
@@ -147,9 +158,9 @@ with tf.Session(config = config) as sess:
                     sampled_actions[x].append(action)
                 state = env.get_state(len(sent_ids),action)
                 if env.num_selected_sents==0:
-                    reward = total_avg_reward
+                    reward = total_avg_reward + env.get_comp(valid)
                 else:
-                    reward = env.get_reward()
+                    reward = env.get_reward() + env.get_comp(valid)
                 sample_avg_reward += reward/num_samples
                 sampled_reward[x] = reward
 
@@ -181,10 +192,10 @@ with tf.Session(config = config) as sess:
             state = env.get_state(len(sent_ids),action)
             if env.num_selected_sents!=0:
                 tot_selected_sents+=env.num_selected_sents
-                avg_reward+=env.get_reward()
+                avg_reward+=(env.get_reward()+env.get_comp(valid))
                 selected_sents+=env.selected_sents
             else:
-                avg_reward+=total_avg_reward
+                avg_reward+=(total_avg_reward+env.get_comp(valid))
         tmp_sents,tmp_y,tmp_e1,tmp_e2 = utils.filter_selected(sents_list,y_list,en1_position_list,en2_position_list,selected_sents)
         selected_sents_list, selected_y_list, selected_e1_list,selected_e2_list = shuffle(tmp_sents, tmp_y, tmp_e1, tmp_e2)
         if tot_selected_sents!=0:

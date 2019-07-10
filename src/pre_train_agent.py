@@ -148,9 +148,9 @@ with tf.Session(config = config) as sess:
                     sampled_actions[x].append(action)
                 state = env.get_state(len(sent_ids), action)
                 if env.num_selected_sents == 0:
-                    reward = total_avg_reward
+                    reward = (total_avg_reward+env.get_comp(valid))
                 else:
-                    reward = env.get_reward()
+                    reward = (env.get_reward()+env.get_comp(valid))
                 sample_avg_reward += reward / num_samples
                 sampled_reward[x] = reward
 
